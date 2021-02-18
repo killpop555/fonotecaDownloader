@@ -39,3 +39,7 @@ nextPage = "css:div.jtable-bottom-panel div.jtable-left-area span.jtable-page-li
 tableRow = "css:div#FnjvAudioCollection div.jtable-main-container table.jtable tbody tr.jtable-data-row"
 
 audioButton = " td input[title='Tocar Áudio']"
+
+individualDataPopup = "css:body.modal-open div#FnjvRecordModal.modal.fade.in"
+
+individualDataPopupCloseButton = individualDataPopup+" div.modal-dialog div.modal-content div.modal-header button.close"

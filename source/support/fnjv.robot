@@ -114,6 +114,7 @@ Download Animal Data
     ${gender}    Get Text    ${locator} td:nth-child(4)
     ${species}    Get Text    ${locator} td:nth-child(5)
     ${popularName}    Get Text    ${locator} td:nth-child(6)
+    Get Individual Data
     ${animal}    Create Dictionary    number=${number}    class=${class}    family=${family}    gender=${gender}    species=${species}    popularName=${popularName}
     [Return]    ${animal}
 
@@ -122,7 +123,17 @@ Click on Individual Data
     Wait Until Element Is Visible    ${locator} td:nth-child(1)
     Click Element    ${locator} td:nth-child(1)
 
+Individual Data Popup Must Be Opened
+    Wait Until Element Is Visible    ${individualDataPopup}
+
+Close Individual Data Popup
+    Wait Until Element Is Visible    ${individualDataPopupCloseButton}
+    Click Element    ${individualDataPopupCloseButton}
+
 Get Individual Data
     Click on Individual Data
+    Individual Data Popup Must Be Opened
+    Close Individual Data Popup
+
     
     
