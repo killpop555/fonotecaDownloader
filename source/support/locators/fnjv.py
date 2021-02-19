@@ -43,3 +43,15 @@ audioButton = " td input[title='Tocar Áudio']"
 individualDataPopup = "css:body.modal-open div#FnjvRecordModal.modal.fade.in"
 
 individualDataPopupCloseButton = individualDataPopup+" div.modal-dialog div.modal-content div.modal-header button.close"
+
+individualInfoHeader = individualDataPopup+" div.accordion:nth-child(1) div.header"
+
+registerInfoHeader = individualDataPopup+" div.accordion:nth-child(2) div.header"
+
+locationInfoHeader = individualDataPopup+" div.accordion:nth-child(3) div.header"
+
+individualDataActiveContent = individualDataPopup+" div.accordion.active div.content"
+
+individualSoundElement = individualDataPopup+" div.player_panel div.player_fnjv_record"
+
+individualAudioElement = individualSoundElement+" audio"

@@ -131,3 +131,5 @@ dmypy.json
 #Robot Output Files
 *.html
 *.xml
+*.json
+output/

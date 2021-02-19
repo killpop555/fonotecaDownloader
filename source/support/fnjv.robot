@@ -3,6 +3,8 @@ Library    SeleniumLibrary
 Library    Collections
 Library    JSONLibrary
 Library    OperatingSystem
+Library    Process
+Library    String
 Variables    locators/fnjv.py
 
 *** Keywords ***
@@ -70,13 +72,14 @@ Get Number Of Pages in Search Results
 
 Click On Next Page Button
     Wait Until Element Is Visible    ${nextPage}
+    Sleep    2
     Click Element    ${nextPage}
     Sleep    2
 
 Download All Records in Search Results
     ${numberOfPages}    Get Number Of Pages in Search Results
     ${animals}    Create List
-    FOR    ${page}    IN RANGE    3   #${numberOfPages}
+    FOR    ${page}    IN RANGE    ${numberOfPages}
         ${pageAnimals}    Download Animals in Page
         ${animals}    Combine Lists    ${animals}    ${pageAnimals}
         Run Keyword If    ${page}<${numberOfPages}-1    Click On Next Page Button
@@ -87,7 +90,7 @@ Download All Records in Search Results
 Create Animals Json
     [Arguments]     ${animalsData}
     ${jsonString}     Convert JSON To String    ${animalsData}
-    Create File    ${OUTPUT_DIR}/animals.json    ${jsonString}    UTF-8
+    Create File    ${OUTPUT_DIR}/animals.json    ${jsonString}    SYSTEM
 
 Get Animals Count
     ${animals}    Get Element Count    ${tableRow}
@@ -114,8 +117,8 @@ Download Animal Data
     ${gender}    Get Text    ${locator} td:nth-child(4)
     ${species}    Get Text    ${locator} td:nth-child(5)
     ${popularName}    Get Text    ${locator} td:nth-child(6)
-    Get Individual Data
-    ${animal}    Create Dictionary    number=${number}    class=${class}    family=${family}    gender=${gender}    species=${species}    popularName=${popularName}
+    ${individualData}    Get Individual Data    ${locator}
+    ${animal}    Create Dictionary    number=${number}    class=${class}    family=${family}    gender=${gender}    species=${species}    popularName=${popularName}    individualData=${individualData}
     [Return]    ${animal}
 
 Click on Individual Data
@@ -129,11 +132,64 @@ Individual Data Popup Must Be Opened
 Close Individual Data Popup
     Wait Until Element Is Visible    ${individualDataPopupCloseButton}
     Click Element    ${individualDataPopupCloseButton}
+    Wait Until Element Is Not Visible    ${individualDataPopup}
 
 Get Individual Data
-    Click on Individual Data
+    [Arguments]    ${locator}
+    Click on Individual Data   ${locator}
     Individual Data Popup Must Be Opened
+    ${individualInfo}    Get Individual Info
+    ${registerInfo}    Get Register Info
+    ${locationInfo}    Get Location Info
+    ${audio}    Get Individual Audio
     Close Individual Data Popup
+    ${individualData}    Create Dictionary    individual=${individualInfo}    register=${registerInfo}    location=${locationInfo}    audio=${audio}
+    [Return]    ${individualData}
 
-    
-    
+Get Individual Info
+    ${individualInfo}    Get Popup Info    ${individualInfoHeader}
+    [Return]     ${individualInfo}
+
+Get Register Info
+    ${registerInfo}    Get Popup Info    ${registerInfoHeader}
+    [Return]     ${registerInfo}
+
+Get Location Info
+    ${locationInfo}    Get Popup Info    ${locationInfoHeader}
+    [Return]     ${locationInfo}
+
+Get Popup Info
+    [Arguments]    ${header}
+    Wait Until Element is Visible    ${header}
+    Click Element    ${header}
+    ${info}    Get Text    ${individualDataActiveContent}
+    Click Element    ${header}
+    Wait Until Element is Not Visible    ${individualDataActiveContent}
+    [Return]     ${info}
+
+Download From URL
+    [Arguments]     ${url}
+    Run Process    wget     ${url}
+    ${urlList}    Split String    ${url}    separator=/
+    ${filename}    Set Variable    ${urlList[-1]}
+    [Return]    ${OUTPUT_DIR}/${filename}
+
+Get Individual Sound Specter
+    Wait Until Element is Visible    ${individualSoundElement}
+    ${soundSpecterUrl}    Get Element Attribute    ${individualAudioElement}    player_image
+    ${soundSpecterPath}    Download From URL    ${soundSpecterUrl}
+    ${specter}    Create Dictionary    url=${soundSpecterUrl}    file=${soundSpecterPath}
+    [Return]    ${specter}
+
+Get Individual Sound Audio
+    Wait Until Element is Visible    ${individualSoundElement}
+    ${soundAudioUrl}    Get Element Attribute    ${individualAudioElement}    src
+    ${soundAudioPath}    Download From URL    ${soundAudioUrl}
+    ${audio}    Create Dictionary    url=${soundAudioUrl}    file=${soundAudioPath}
+    [Return]    ${audio}
+
+Get Individual Audio
+    ${soundSpecter}    Get Individual Sound Specter
+    ${soundAudio}    Get Individual Sound Audio
+    ${audio}    Create Dictionary    specter=${soundSpecter}    audio=${soundAudio}
+    [Return]     ${audio}
